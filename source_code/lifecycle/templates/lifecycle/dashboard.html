@@ -1,0 +1,13 @@
+{% extends "lifecycle/base.html" %}
+{% block content %}
+<div class="page-heading"><h1>Dashboard</h1><a class="btn btn-outline-primary" href="{% url 'run_verification' %}">Run Verification</a></div>
+<div class="metric-grid">
+  {% for label,value in metrics.items %}
+  <section class="metric-card"><span>{{ label|title }}</span><strong>{{ value }}</strong></section>
+  {% endfor %}
+</div>
+<h2>Degree-wise Student Summary</h2>
+<table class="table table-striped"><thead><tr><th>Degree</th><th>Total</th></tr></thead><tbody>
+{% for row in degree_stats %}<tr><td>{{ row.degree }}</td><td>{{ row.total }}</td></tr>{% empty %}<tr><td colspan="2">No student data yet.</td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}

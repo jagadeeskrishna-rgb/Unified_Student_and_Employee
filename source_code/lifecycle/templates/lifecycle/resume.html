@@ -1,0 +1,16 @@
+{% extends "lifecycle/base.html" %}
+{% block content %}
+<section class="resume-sheet">
+  <h1>{{ user.get_full_name|default:user.username }}</h1>
+  <p>{{ user.email }}</p>
+  {% if user.student_profile %}
+  <h2>Education and Career</h2><p>{{ user.student_profile.degree }} - {{ user.student_profile.department }} ({{ user.student_profile.batch_year }})</p>
+  <p>Status: {{ user.student_profile.get_career_status_display }}</p>
+  <h2>Skills</h2><ul>{% for skill in user.student_profile.skills.all %}<li>{{ skill.name }} - {{ skill.proficiency }}</li>{% empty %}<li>No skills added.</li>{% endfor %}</ul>
+  {% endif %}
+  {% if user.employee_profile %}
+  <h2>Employment</h2><p>{{ user.employee_profile.designation }} | ULIN {{ user.employee_profile.ulin }}</p>
+  {% endif %}
+  <button onclick="window.print()" class="btn btn-outline-primary">Print Resume</button>
+</section>
+{% endblock %}

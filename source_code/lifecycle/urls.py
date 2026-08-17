@@ -1,0 +1,31 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("register/", views.register, name="register"),
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("students/", views.students, name="students"),
+    path("students/new/", views.student_create, name="student_create"),
+    path("students/<int:pk>/edit/", views.student_update, name="student_update"),
+    path("students/education/new/", views.education_create, name="education_create"),
+    path("students/skills/new/", views.skill_create, name="skill_create"),
+    path("students/certifications/new/", views.certification_create, name="certification_create"),
+    path("students/internships/new/", views.internship_create, name="internship_create"),
+    path("students/placements/new/", views.placement_create, name="placement_create"),
+    path("employees/", views.employees, name="employees"),
+    path("employees/new/", views.employee_create, name="employee_create"),
+    path("employees/<int:pk>/edit/", views.employee_update, name="employee_update"),
+    path("employees/employment/new/", views.employment_create, name="employment_create"),
+    path("companies/", views.companies, name="companies"),
+    path("companies/new/", views.company_create, name="company_create"),
+    path("salary/", views.salary_records, name="salary_records"),
+    path("salary/new/", views.salary_create, name="salary_create"),
+    path("queries/", views.salary_queries, name="salary_queries"),
+    path("queries/new/", views.query_create, name="query_create"),
+    path("verification/", views.verification_issues, name="verification_issues"),
+    path("verification/run/", views.run_verification, name="run_verification"),
+    path("resume/", views.resume, name="resume"),
+    path("api/reports/", views.reports_api, name="reports_api"),
+    path("api/salary/<int:pk>/", views.salary_api, name="salary_api"),
+]

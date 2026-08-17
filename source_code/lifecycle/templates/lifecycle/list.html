@@ -1,0 +1,17 @@
+{% extends "lifecycle/base.html" %}
+{% block content %}
+<div class="page-heading"><h1>{{ title }}</h1>
+  <form method="get" class="d-flex gap-2"><input name="q" class="form-control" value="{{ query }}" placeholder="Search"><button class="btn btn-outline-secondary">Search</button></form>
+</div>
+<div class="quick-actions">
+  <a class="btn btn-primary" href="{% url 'student_create' %}">Student</a>
+  <a class="btn btn-primary" href="{% url 'employee_create' %}">Employee</a>
+  <a class="btn btn-primary" href="{% url 'company_create' %}">Company</a>
+  <a class="btn btn-primary" href="{% url 'salary_create' %}">Salary</a>
+  <a class="btn btn-primary" href="{% url 'query_create' %}">Query</a>
+</div>
+<table class="table table-hover table-bordered"><thead><tr><th>ID</th><th>Record</th><th>Status</th></tr></thead><tbody>
+{% for item in items %}<tr><td>{{ item.id }}</td><td>{{ item }}</td><td>{% if item.has_mismatch %}Mismatch{% elif item.is_verified %}Verified{% elif item.status %}{{ item.status }}{% else %}Pending{% endif %}</td></tr>
+{% empty %}<tr><td colspan="3">No records found.</td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}

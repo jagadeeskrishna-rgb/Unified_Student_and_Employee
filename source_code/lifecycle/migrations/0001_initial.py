@@ -1,0 +1,131 @@
+# Generated for academic project delivery.
+from django.conf import settings
+from django.db import migrations, models
+import django.db.models.deletion
+import django.utils.timezone
+
+
+class Migration(migrations.Migration):
+    initial = True
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
+    operations = [
+        migrations.CreateModel(name="Company", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("name", models.CharField(max_length=160, unique=True)),
+            ("registration_number", models.CharField(max_length=60, unique=True)),
+            ("industry", models.CharField(max_length=100)),
+            ("contact_email", models.EmailField(max_length=254)),
+            ("contact_mobile", models.CharField(max_length=15)),
+            ("address", models.TextField(blank=True)),
+            ("is_verified", models.BooleanField(default=False)),
+            ("created_at", models.DateTimeField(auto_now_add=True)),
+            ("owner", models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="company_account", to=settings.AUTH_USER_MODEL)),
+        ]),
+        migrations.CreateModel(name="EmployeeProfile", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("full_name", models.CharField(max_length=140)),
+            ("ulin", models.CharField(max_length=40, unique=True, verbose_name="Unique Lifecycle Identification Number")),
+            ("designation", models.CharField(max_length=120)),
+            ("expected_salary", models.DecimalField(decimal_places=2, default=0, max_digits=10)),
+            ("is_verified", models.BooleanField(default=False)),
+            ("user", models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name="employee_profile", to=settings.AUTH_USER_MODEL)),
+        ]),
+        migrations.CreateModel(name="Profile", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("role", models.CharField(choices=[("ADMIN", "Admin"), ("STUDENT", "Student"), ("EMPLOYEE", "Employee"), ("COMPANY", "Company/HR")], max_length=20)),
+            ("mobile", models.CharField(blank=True, max_length=15)),
+            ("demo_identity_number", models.CharField(blank=True, db_index=True, max_length=30)),
+            ("is_verified", models.BooleanField(default=False)),
+            ("created_at", models.DateTimeField(auto_now_add=True)),
+            ("user", models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name="profile", to=settings.AUTH_USER_MODEL)),
+        ]),
+        migrations.CreateModel(name="StudentProfile", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("full_name", models.CharField(max_length=140)),
+            ("roll_number", models.CharField(max_length=40, unique=True)),
+            ("degree", models.CharField(max_length=120)),
+            ("department", models.CharField(max_length=120)),
+            ("batch_year", models.PositiveIntegerField()),
+            ("career_status", models.CharField(choices=[("STUDYING", "Studying"), ("SEARCHING", "Searching for Job"), ("INTERN", "Doing Internship"), ("PLACED", "Placed"), ("EMPLOYED", "Currently Employed")], default="STUDYING", max_length=20)),
+            ("expected_salary", models.DecimalField(decimal_places=2, default=0, max_digits=10)),
+            ("is_verified", models.BooleanField(default=False)),
+            ("current_company", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to="lifecycle.company")),
+            ("user", models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name="student_profile", to=settings.AUTH_USER_MODEL)),
+        ]),
+        migrations.CreateModel(name="EducationRecord", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("qualification", models.CharField(max_length=80)),
+            ("institution", models.CharField(max_length=160)),
+            ("year_of_passing", models.PositiveIntegerField()),
+            ("percentage", models.DecimalField(decimal_places=2, max_digits=5)),
+            ("student", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="education_records", to="lifecycle.studentprofile")),
+        ]),
+        migrations.CreateModel(name="Skill", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("name", models.CharField(max_length=80)),
+            ("proficiency", models.CharField(default="Intermediate", max_length=40)),
+            ("student", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="skills", to="lifecycle.studentprofile")),
+        ], options={"unique_together": {("student", "name")}}),
+        migrations.CreateModel(name="Certification", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("title", models.CharField(max_length=140)),
+            ("issuer", models.CharField(max_length=140)),
+            ("issued_on", models.DateField()),
+            ("student", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="certifications", to="lifecycle.studentprofile")),
+        ]),
+        migrations.CreateModel(name="Internship", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("company_name", models.CharField(max_length=140)),
+            ("role", models.CharField(max_length=100)),
+            ("start_date", models.DateField()),
+            ("end_date", models.DateField(blank=True, null=True)),
+            ("status", models.CharField(default="Completed", max_length=30)),
+            ("student", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="internships", to="lifecycle.studentprofile")),
+        ]),
+        migrations.CreateModel(name="Placement", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("designation", models.CharField(max_length=120)),
+            ("offered_salary", models.DecimalField(decimal_places=2, max_digits=10)),
+            ("offer_date", models.DateField(default=django.utils.timezone.now)),
+            ("status", models.CharField(default="Offered", max_length=30)),
+            ("company", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="lifecycle.company")),
+            ("student", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="placements", to="lifecycle.studentprofile")),
+        ]),
+        migrations.CreateModel(name="EmploymentRecord", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("designation", models.CharField(max_length=120)),
+            ("start_date", models.DateField()),
+            ("end_date", models.DateField(blank=True, null=True)),
+            ("status", models.CharField(choices=[("ACTIVE", "Active"), ("RESIGNED", "Resigned"), ("TERMINATED", "Terminated"), ("NOTICE", "Notice Period")], default="ACTIVE", max_length=20)),
+            ("company", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="employment_records", to="lifecycle.company")),
+            ("employee", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="employment_records", to="lifecycle.employeeprofile")),
+        ]),
+        migrations.CreateModel(name="SalaryRecord", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("month", models.PositiveSmallIntegerField()),
+            ("year", models.PositiveIntegerField()),
+            ("expected_salary", models.DecimalField(decimal_places=2, max_digits=10)),
+            ("paid_salary", models.DecimalField(decimal_places=2, max_digits=10)),
+            ("uploaded_at", models.DateTimeField(auto_now_add=True)),
+            ("company", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="salary_records", to="lifecycle.company")),
+            ("employee", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="salary_records", to="lifecycle.employeeprofile")),
+        ], options={"ordering": ["-year", "-month"], "unique_together": {("employee", "company", "month", "year")}}),
+        migrations.CreateModel(name="SalaryQuery", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("subject", models.CharField(max_length=140)),
+            ("description", models.TextField()),
+            ("status", models.CharField(choices=[("OPEN", "Open"), ("IN_REVIEW", "In Review"), ("RESOLVED", "Resolved"), ("REJECTED", "Rejected")], default="OPEN", max_length=20)),
+            ("admin_response", models.TextField(blank=True)),
+            ("created_at", models.DateTimeField(auto_now_add=True)),
+            ("employee", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="salary_queries", to="lifecycle.employeeprofile")),
+            ("salary_record", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="queries", to="lifecycle.salaryrecord")),
+        ]),
+        migrations.CreateModel(name="VerificationIssue", fields=[
+            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+            ("issue_type", models.CharField(choices=[("DUPLICATE_EMAIL", "Duplicate Email"), ("DUPLICATE_MOBILE", "Duplicate Mobile"), ("DUPLICATE_ID", "Duplicate Demo Identity"), ("MULTIPLE_ACTIVE", "Multiple Active Employment"), ("SALARY_MISMATCH", "Salary Mismatch")], max_length=40)),
+            ("summary", models.CharField(max_length=220)),
+            ("details", models.TextField()),
+            ("is_resolved", models.BooleanField(default=False)),
+            ("created_at", models.DateTimeField(auto_now_add=True)),
+        ]),
+    ]
